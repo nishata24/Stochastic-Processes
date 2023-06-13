@@ -1,0 +1,291 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>stoch_project2</title><meta name="generator" content="MATLAB 9.14"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2023-05-02"><meta name="DC.source" content="stoch_project2.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Nicolette, Armaan and Nishat</a></li><li><a href="#2">Part 1</a></li><li><a href="#3">Part 2</a></li></ul></div><h2 id="1">Nicolette, Armaan and Nishat</h2><pre class="codeinput">clc;
+clear;
+</pre><h2 id="2">Part 1</h2><p>Implement the Bayes MMSE and Linear MMSE estimators from examples 8.5 and 8.6. from the MIT notes. Simulate this system by random draws of Y and W, and then estimating Y from the observations X = Y + W. Verify that your simulation is correct by comparing theoretical and empirical values of the MSE. Report your results in a table.</p><pre class="codeinput">N = 10000;
+Y = 2*rand(1,N)-1; <span class="comment">% generates 10000 random numbers between -1 and 1 w/ equal distribution</span>
+W = 4*rand(1,N)-2; <span class="comment">% generates 10000 random numbers between -2 and 2 w/ equal distribution</span>
+X = Y + W;
+Z = X;
+
+<span class="comment">% transform values of X in a piecewise manner</span>
+X(X&gt;-1 &amp; X&lt;1) = 0; <span class="comment">% set any element of X betewen -1 and 1 (exclusive) to 0</span>
+X(X&lt;-1) = 0.5+X(X&lt;-1)*.5; <span class="comment">% set any element of X that is less than -1 to a transformed value that scales the range of X from -inf to -1 to 0 to 0.5</span>
+X(X&gt;1) = -0.5+X(X&gt;1)*.5; <span class="comment">% set any element of X greater than 1 to a transformed value that scales the range of X from 1 to ing to -0.5 to 0</span>
+
+bayesian_MSE = mean(mean((Y - X) .^ 2)); <span class="comment">% calculate the bayesian MSE by taking the mean of the mean sq error between original Y and transformed X</span>
+linear = Z/5;
+linear_MSE = mean(mean((Y-linear).^2)); <span class="comment">% calculates the LMSE by taking the mean of the mean sq error between Y and Z/5</span>
+
+<span class="comment">% compare theoretical and experimental values of Bayesian and Linear MMSE</span>
+<span class="comment">% theoretical values are set to [1/4;4/15]</span>
+T = table([1/4;4/15],[bayesian_MSE;linear_MSE],<span class="string">'VariableNames'</span>,{<span class="string">'Theoretical'</span>,<span class="string">'Experimental'</span>},<span class="string">'RowNames'</span>,{<span class="string">'Bayesian'</span>,<span class="string">'Linear'</span>});
+
+disp(T)
+</pre><pre class="codeoutput">                Theoretical    Experimental
+                ___________    ____________
+
+    Bayesian         0.25        0.25025   
+    Linear        0.26667        0.26876   
+
+</pre><img vspace="5" hspace="5" src="stoch_project2_01.png" alt=""> <h2 id="3">Part 2</h2><p>Implement the linear estimator for multiple noisy observations, similar to example 8.8 from the MIT notes. Extend this example so that it works for an arbitrary number of observations. Use Gaussian random variables for Y and R. Set &#956;y = 1. Experiment with a few different variances for both Y and R. On one plot, show the mean squared error of your simulation compared to the theoretical values for at least 2 different pairs of variances.</p><pre class="codeinput"><span class="comment">% pre-allocate space</span>
+lin = zeros(20,4);
+theoretical = zeros(20,4);
+
+<span class="keyword">for</span> m = 1:20
+    [theoretical(m,:), lin(m,:)] = scenario2(m); <span class="comment">% function gets called 20 times and stores results in theoretical and exp MMSE estimates in 2 arrays</span>
+<span class="keyword">end</span>
+figure
+
+<span class="comment">% create the plot with 4 subplots to account for the different variance values to compare theoretical + exp mmse</span>
+poss = 1; <span class="comment">% variable used to loop through 4 subplots</span>
+<span class="keyword">while</span> poss &lt;= 4
+   plot(1:1:20, theoretical(:,poss));
+   hold <span class="string">on</span>;
+   scatter(1:1:20, lin(:,poss));
+   hold <span class="string">on</span>;
+   poss = poss + 1;
+<span class="keyword">end</span>
+
+title(<span class="string">"Linear Estimator"</span>);
+xlabel(<span class="string">"Observations"</span>);
+ylabel(<span class="string">"Min Mean Square Error"</span>);legend(<span class="string">'Theoretical: varY = 0.25, varR = 0.25 '</span>, <span class="keyword">...</span>
+    <span class="string">'Experiment: varY = 0.25,, varR = 0.25 '</span>, <span class="string">'Theoretical: varY = 0.5, varR = 0.5'</span>, <span class="keyword">...</span>
+    <span class="string">'Experiment: varY = 0.5,  varR = 0.5'</span>, <span class="string">'Theoretical: varY = 0.75, varR = 0.75'</span>, <span class="keyword">...</span>
+    <span class="string">'Experiment: varY = 0.75, varR = 0.75'</span>,<span class="string">'Theoretical: varY = 1, varR = 1'</span>,<span class="string">'Exp: varY = 1, varR = 1'</span>);
+
+<span class="comment">% The function below will take some input z and find the theoretical &amp; exp mmse estimates for 4 variance values</span>
+<span class="keyword">function</span> [theoretical_MMSE, exp_MMSE] = scenario2(z)
+    N = 10000; <span class="comment">% number of iterations for generating random variables</span>
+
+    <span class="comment">% variances that will be used to generate random Y and R random variables</span>
+    Y_variance = [0.25,0.5,0.75,1];
+    R_variance = [0.25,0.5,0.75,1];
+
+    <span class="comment">% pre-allocate</span>
+    exp_MMSE = zeros(4,1);
+    theoretical_MMSE = zeros(4,1);
+
+    <span class="comment">% calculate the theoretical mmse for each combo of Y and R variances</span>
+    i = 1;
+    <span class="keyword">while</span> i &lt;= 4
+        theoretical_MMSE(i,:) = (Y_variance(i) * R_variance(i)) / (z * Y_variance(i) + R_variance(i));
+        i = i + 1;
+    <span class="keyword">end</span>
+
+    <span class="comment">% initializes matricies that will later store random variables</span>
+    Y = zeros(4, N, 1);
+    h = zeros(4, N ,1);
+    R = zeros(4, N, z);
+    X = zeros(4, N, z);
+
+    <span class="keyword">for</span> i = 1:4 <span class="comment">% generate random variables for Y, R, and X using the specified variance vals</span>
+       Y(i,:,:) = repmat(sqrt(Y_variance(i)) .* randn(N, 1) + 1, [1 1 1]); <span class="comment">% generate 4xNx1 matrix where N is the number of samples and 1 is the number of features</span>
+       R(i,:,:) = sqrt(R_variance(i)) .* randn(N, z); <span class="comment">% generate 4xNxz where z is the number of features</span>
+
+       <span class="keyword">for</span> j = 1:z
+          X(i,:,j) = R(i,:,j) + Y(i,:,:); <span class="comment">% generate 4xNxz matrix for X by adding corresponding Y and R matrices for i</span>
+       <span class="keyword">end</span>
+
+       vR = zeros(z, 1);
+       Xt = reshape(X(i,:,:), N, z);
+       Yt = Y(i,:)';
+
+        n = 1; <span class="comment">% this loop calculates the var for x-y for each z val</span>
+        vR = zeros(1, z);
+        <span class="keyword">while</span> n &lt;= z
+            XminusY = Xt(:,n) - Yt;
+            vR(n) = var(XminusY);
+            n = n + 1;
+        <span class="keyword">end</span>
+
+       min_mean_sq = (1 / (z * var(Yt) + mean(vR))) * (mean(vR) * mean(Yt) + var(Yt) * sum(Xt, 2)); <span class="comment">% finds MMS</span>
+       h(i,:,:) = min_mean_sq;
+       exp_MMSE(i,1) = mean((Yt - min_mean_sq) .^ 2); <span class="comment">%calculate emperical MMSE</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="stoch_project2_02.png" alt=""> <p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2023a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Nicolette, Armaan and Nishat
+clc;
+clear;
+%% Part 1
+% Implement the Bayes MMSE and Linear MMSE estimators from examples 8.5 and 8.6. from the MIT notes. 
+% Simulate this system by random draws of Y and W, and then estimating Y from the observations X = Y + W. 
+% Verify that your simulation is correct by comparing theoretical and empirical values of the MSE. 
+% Report your results in a table.
+
+N = 10000; 
+Y = 2*rand(1,N)-1; % generates 10000 random numbers between -1 and 1 w/ equal distribution 
+W = 4*rand(1,N)-2; % generates 10000 random numbers between -2 and 2 w/ equal distribution 
+X = Y + W;
+Z = X;
+
+% transform values of X in a piecewise manner 
+X(X>-1 & X<1) = 0; % set any element of X betewen -1 and 1 (exclusive) to 0
+X(X<-1) = 0.5+X(X<-1)*.5; % set any element of X that is less than -1 to a transformed value that scales the range of X from -inf to -1 to 0 to 0.5
+X(X>1) = -0.5+X(X>1)*.5; % set any element of X greater than 1 to a transformed value that scales the range of X from 1 to ing to -0.5 to 0
+
+bayesian_MSE = mean(mean((Y - X) .^ 2)); % calculate the bayesian MSE by taking the mean of the mean sq error between original Y and transformed X
+linear = Z/5;
+linear_MSE = mean(mean((Y-linear).^2)); % calculates the LMSE by taking the mean of the mean sq error between Y and Z/5
+
+% compare theoretical and experimental values of Bayesian and Linear MMSE
+% theoretical values are set to [1/4;4/15]
+T = table([1/4;4/15],[bayesian_MSE;linear_MSE],'VariableNames',{'Theoretical','Experimental'},'RowNames',{'Bayesian','Linear'});
+
+disp(T)
+
+%% Part 2
+% Implement the linear estimator for multiple noisy observations, similar to example 8.8 from the MIT notes. 
+% Extend this example so that it works for an arbitrary number of observations. 
+% Use Gaussian random variables for Y and R. Set μy = 1. 
+% Experiment with a few different variances for both Y and R. 
+% On one plot, show the mean squared error of your simulation compared to the theoretical values for at least 2 different pairs of variances.
+
+% pre-allocate space 
+lin = zeros(20,4);
+theoretical = zeros(20,4);
+
+for m = 1:20
+    [theoretical(m,:), lin(m,:)] = scenario2(m); % function gets called 20 times and stores results in theoretical and exp MMSE estimates in 2 arrays 
+end
+figure
+
+% create the plot with 4 subplots to account for the different variance values to compare theoretical + exp mmse
+poss = 1; % variable used to loop through 4 subplots 
+while poss <= 4
+   plot(1:1:20, theoretical(:,poss));
+   hold on;
+   scatter(1:1:20, lin(:,poss));
+   hold on;
+   poss = poss + 1;
+end
+
+title("Linear Estimator");
+xlabel("Observations");
+ylabel("Min Mean Square Error");legend('Theoretical: varY = 0.25, varR = 0.25 ', ...
+    'Experiment: varY = 0.25,, varR = 0.25 ', 'Theoretical: varY = 0.5, varR = 0.5', ...
+    'Experiment: varY = 0.5,  varR = 0.5', 'Theoretical: varY = 0.75, varR = 0.75', ...
+    'Experiment: varY = 0.75, varR = 0.75','Theoretical: varY = 1, varR = 1','Exp: varY = 1, varR = 1');
+
+% The function below will take some input z and find the theoretical & exp mmse estimates for 4 variance values
+function [theoretical_MMSE, exp_MMSE] = scenario2(z)
+    N = 10000; % number of iterations for generating random variables
+
+    % variances that will be used to generate random Y and R random variables
+    Y_variance = [0.25,0.5,0.75,1];  
+    R_variance = [0.25,0.5,0.75,1];
+
+    % pre-allocate
+    exp_MMSE = zeros(4,1);
+    theoretical_MMSE = zeros(4,1);
+
+    % calculate the theoretical mmse for each combo of Y and R variances
+    i = 1; 
+    while i <= 4 
+        theoretical_MMSE(i,:) = (Y_variance(i) * R_variance(i)) / (z * Y_variance(i) + R_variance(i));
+        i = i + 1;
+    end
+
+    % initializes matricies that will later store random variables
+    Y = zeros(4, N, 1);  
+    h = zeros(4, N ,1);
+    R = zeros(4, N, z);
+    X = zeros(4, N, z);
+
+    for i = 1:4 % generate random variables for Y, R, and X using the specified variance vals
+       Y(i,:,:) = repmat(sqrt(Y_variance(i)) .* randn(N, 1) + 1, [1 1 1]); % generate 4xNx1 matrix where N is the number of samples and 1 is the number of features
+       R(i,:,:) = sqrt(R_variance(i)) .* randn(N, z); % generate 4xNxz where z is the number of features
+
+       for j = 1:z
+          X(i,:,j) = R(i,:,j) + Y(i,:,:); % generate 4xNxz matrix for X by adding corresponding Y and R matrices for i
+       end
+
+       vR = zeros(z, 1);
+       Xt = reshape(X(i,:,:), N, z); 
+       Yt = Y(i,:)';
+     
+        n = 1; % this loop calculates the var for x-y for each z val
+        vR = zeros(1, z);
+        while n <= z
+            XminusY = Xt(:,n) - Yt;
+            vR(n) = var(XminusY);
+            n = n + 1;
+        end
+
+       min_mean_sq = (1 / (z * var(Yt) + mean(vR))) * (mean(vR) * mean(Yt) + var(Yt) * sum(Xt, 2)); % finds MMS
+       h(i,:,:) = min_mean_sq;
+       exp_MMSE(i,1) = mean((Yt - min_mean_sq) .^ 2); %calculate emperical MMSE
+    end
+end
+
+##### SOURCE END #####
+--></body></html>

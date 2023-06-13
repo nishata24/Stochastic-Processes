@@ -1,0 +1,403 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Nishat Ahmed, Armaan Kapoor, Nicolette Thiro</title><meta name="generator" content="MATLAB 9.14"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2023-05-01"><meta name="DC.source" content="stoch_proj3.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Nishat Ahmed, Armaan Kapoor, Nicolette Thiro</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Stochastics Project 3</a></li><li><a href="#2">Part 1:</a></li><li><a href="#3">Part 2</a></li></ul></div><h2 id="1">Stochastics Project 3</h2><pre class="codeinput">clc;
+clear;
+close <span class="string">all</span>;
+</pre><h2 id="2">Part 1:</h2><p>Generate random draws from both of the exponential and Rayleigh random variables. You can use the EXPRND and RAYRND functions in MATLAB for this. Derive by hand, and implement ML estimators in MATLAB and plot the MSE with respect to # of observations. On separate plots, plot the bias and the variance of your estimators, with respect to the # of observations. Do this for a couple of values of lambda.</p><pre class="codeinput"><span class="comment">%setup</span>
+N = 1000000;
+observation = 3:13;
+lambda = [1 5 10];
+alpha = [1 5 10];
+
+<span class="comment">%pre-allocate memory</span>
+MSE_exp1 = zeros(1,length(observation));
+bias_exp1 = zeros(1,length(observation));
+var_exp1 = zeros(1,length(observation));
+
+MSE_exp2 = zeros(1,length(observation));
+bias_exp2 = zeros(1,length(observation));
+var_exp2 = zeros(1,length(observation));
+
+MSE_exp3 = zeros(1,length(observation));
+bias_exp3 = zeros(1,length(observation));
+var_exp3 = zeros(1,length(observation));
+
+MSE_rayleigh1 = zeros(1,length(observation));
+bias_ray1 = zeros(1,length(observation));
+var_ray1 = zeros(1,length(observation));
+
+MSE_rayleigh2 = zeros(1,length(observation));
+bias_ray2 = zeros(1,length(observation));
+var_ray2 = zeros(1,length(observation));
+
+MSE_rayleigh3 = zeros(1,length(observation));
+bias_ray3 = zeros(1,length(observation));
+var_ray3 = zeros(1,length(observation));
+
+ind=1;
+<span class="keyword">for</span> i = observation
+    <span class="comment">%calculate the MSE, bias and variance for each distribution and for</span>
+    <span class="comment">%each # of observation</span>
+
+    <span class="comment">%MSE is found by taking the mean square of the ML</span>
+    <span class="comment">%estimator-(lambda if exponential; alpha if Rayleigh)</span>
+
+    <span class="comment">%bias is found by taking the mean of the ML estimator and subtracting</span>
+    <span class="comment">%alpha/lambda from the mean</span>
+
+    <span class="comment">%variance is found by taking the variance of the ML estimator</span>
+
+    [MSE_exp1(ind),bias_exp1(ind),var_exp1(ind)]= exponential_mse_bias_variance(N,i,lambda(1));
+    [MSE_exp2(ind),bias_exp2(ind),var_exp2(ind)]= exponential_mse_bias_variance(N,i,lambda(2));
+    [MSE_exp3(ind),bias_exp3(ind),var_exp3(ind)]= exponential_mse_bias_variance(N,i,lambda(3));
+    [MSE_rayleigh1(ind),bias_ray1(ind),var_ray1(ind)]=rayleigh_mse_bias_variance(N,i,alpha(1));
+    [MSE_rayleigh2(ind),bias_ray2(ind),var_ray2(ind)]=rayleigh_mse_bias_variance(N,i,alpha(2));
+    [MSE_rayleigh3(ind),bias_ray3(ind),var_ray3(ind)]=rayleigh_mse_bias_variance(N,i,alpha(3));
+
+    ind=ind+1;
+<span class="keyword">end</span>
+
+<span class="comment">% plot the MSE for exponential and rayleigh distributions</span>
+figure;
+subplot(1,2,1);
+plot(observation, MSE_exp1, observation, MSE_exp2, observation,MSE_exp3);
+title(<span class="string">"Exponential MSE"</span>);
+xlabel(<span class="string">"Number of Observations"</span>);
+ylabel(<span class="string">"MSE"</span>);
+legend(<span class="string">"\lambda = "</span> + lambda(1), <span class="string">"\lambda = "</span> + lambda(2),<span class="string">"\lambda = "</span> + lambda(3));
+
+subplot(1,2,2);
+plot(observation, MSE_rayleigh1, observation, MSE_rayleigh2, observation, MSE_rayleigh3);
+title(<span class="string">"Rayleigh MSE"</span>);
+xlabel(<span class="string">"Number of Observations"</span>);
+ylabel(<span class="string">"MSE"</span>);
+legend(<span class="string">"\alpha = "</span> + alpha(1), <span class="string">"\alpha = "</span> + alpha(2),<span class="string">"\alpha = "</span> + alpha(3));
+
+<span class="comment">%plot the bias for exponential and rayleigh distributions</span>
+figure;
+subplot(1,2,1);
+plot(observation, bias_exp1, observation, bias_exp2, observation, bias_exp3);
+title(<span class="string">"Exponential Bias"</span>);
+xlabel(<span class="string">"Number of Observations"</span>);
+ylabel(<span class="string">"Bias"</span>);
+legend(<span class="string">"\lambda = "</span> + lambda(1), <span class="string">"\lambda = "</span> + lambda(2),<span class="string">"\lambda = "</span> + lambda(3));
+
+
+subplot(1,2,2);
+plot(observation, bias_ray1, observation, bias_ray2,observation,bias_ray3);
+title(<span class="string">"Rayleigh Bias"</span>);
+xlabel(<span class="string">"Number of Observations"</span>);
+ylabel(<span class="string">"Bias"</span>);
+legend(<span class="string">"\alpha = "</span> + alpha(1), <span class="string">"\alpha = "</span> + alpha(2),<span class="string">"\alpha = "</span> + alpha(3));
+
+<span class="comment">%plot the variance for exponential and rayleigh distributions</span>
+figure;
+subplot(1,2,1);
+plot(observation, var_exp1, observation, var_exp2, observation, var_exp3);
+title(<span class="string">"Exponential Variance"</span>);
+xlabel(<span class="string">"Number of Observations"</span>);
+ylabel(<span class="string">"Variance"</span>);
+legend(<span class="string">"\lambda = "</span> + lambda(1), <span class="string">"\lambda = "</span> + lambda(2),<span class="string">"\lambda = "</span> + lambda(3));
+
+subplot(1,2,2);
+plot(observation, var_ray1, observation, var_ray2,observation,var_ray3);
+title(<span class="string">"Rayleigh Variance"</span>);
+xlabel(<span class="string">"Number of Observations"</span>);
+ylabel(<span class="string">"Variance"</span>);
+legend(<span class="string">"\alpha = "</span> + alpha(1), <span class="string">"\alpha = "</span> + alpha(2),<span class="string">"\alpha = "</span> + alpha(3));
+</pre><img vspace="5" hspace="5" src="stoch_proj3_01.png" alt=""> <img vspace="5" hspace="5" src="stoch_proj3_02.png" alt=""> <img vspace="5" hspace="5" src="stoch_proj3_03.png" alt=""> <h2 id="3">Part 2</h2><p>The data in the .mat file, data.mat, has been drawn from either an exponential distribution, or a Rayleigh distribution. Compute the max-likelihood estimate of the parameter using both. Using your estimators that you developed in part 2, compute the max-likelihood estimates of the parameter. Which distribution do you think the data was drawn from? Justify your answer.</p><pre class="codeinput">load <span class="string">data.mat</span>;
+data1 = data.'; <span class="comment">% transpose data into column format so each observation is in a separate row</span>
+[~, size] = size(data); <span class="comment">% get the number of columns in data matrix and store in size variable</span>
+
+<span class="comment">%calculate the ML estimators</span>
+alphaEstimator = sqrt(.5 * mean(data.^2, 2)); <span class="comment">% square root of half the mean of the squared observations</span>
+lambdaEstimator = size./sum(data,2); <span class="comment">% calculate sum of observations in each row, lambda is the ratio o fthe number of observations to the sum of observations</span>
+
+<span class="comment">%get the sum of log likelihoods for exponential and rayleigh distribution</span>
+<span class="comment">%the pdf of an exponential distribution is given as lambdaEstimator * exp(-lambdaEstimator * data1</span>
+<span class="comment">%the pdf of a Rayleigh distribution is given as data1/alphaEstimator^2 .*exp(-data1.^2/(2*alphaEstimator^2))</span>
+<span class="comment">%sum of the the logarithms of the likelihoods</span>
+
+exponentialLikelihood=sum(log(lambdaEstimator * exp(-lambdaEstimator * data1)));
+rayleighLikelihood= sum(log(data1/alphaEstimator^2 .* exp(-data1.^2/(2*alphaEstimator^2))));
+
+disp(<span class="string">"The sum of log likelihoods for exponential distribution is "</span> +exponentialLikelihood)
+disp(<span class="string">"The sum of log likelihoods for rayleigh distribution is "</span>+rayleighLikelihood)
+
+<span class="comment">%The log likelihood value measures how well a model fits. The higher the value, the better</span>
+<span class="comment">%the fit is. Since the rayleigh distribution has a higher likelihood, the data was most</span>
+<span class="comment">%likely drawn from a rayleigh distribution.</span>
+
+
+<span class="comment">% calculate mse, bias, and variance of the maximum likelihood estimator of</span>
+<span class="comment">% the scale parameter alpha of the Rayleigh distribution given i</span>
+<span class="comment">% observations from the distribution</span>
+<span class="keyword">function</span> [mse, bias, variance] = rayleigh_mse_bias_variance(N,i,alpha)
+    rayleigh = raylrnd(alpha, [N i]); <span class="comment">% generate N samples of i observations from Rayleigh distribution with alpha</span>
+    avg=mean(rayleigh.^2,2); <span class="comment">% calculate sample mean of squared observations for each sample</span>
+    alpha2 = sqrt(.5 * avg); <span class="comment">% calculate ML estimator of alpha using sample mean</span>
+    mse= mean((alpha - alpha2).^2); <span class="comment">% calculate MSE of ML estimator by taking mean squared difference between alpha and ML estimator of alpha across all N samples</span>
+    bias = mean(alpha2) - alpha; <span class="comment">% calculate bias of ML estimator</span>
+    variance = var(alpha2); <span class="comment">% calculate variance of ML estimator using the vector of alpha2 values</span>
+
+
+<span class="keyword">end</span>
+
+
+<span class="keyword">function</span> [mse, bias, variance] = exponential_mse_bias_variance(N,i,lambda)
+    exponential = exprnd(1/lambda, [N i]); <span class="comment">% generate N samples of i observations from exponential distribution with lambda</span>
+    add=sum(exponential,2); <span class="comment">% calculate sum of observations for each sample</span>
+    lambda2 =i ./ add; <span class="comment">% calculate ML estimator of lambda using sample sum of observations</span>
+    mse = mean((lambda- lambda2).^2); <span class="comment">% calculate MSE of ML estimator by taking mean squared difference between lambda and ML estimator of lambda across all N samples</span>
+    bias= mean(lambda2) - lambda; <span class="comment">% calculate bias of ML estimator</span>
+    variance = var(lambda2); <span class="comment">% calculate variance of ML estimator using the vector of lambda2 values</span>
+
+
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">The sum of log likelihoods for exponential distribution is 1053.4625
+The sum of log likelihoods for rayleigh distribution is 1365.5161
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2023a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Nishat Ahmed, Armaan Kapoor, Nicolette Thiro
+%% Stochastics Project 3
+clc; 
+clear;
+close all;
+
+
+%% Part 1: 
+% Generate random draws from both of the exponential and Rayleigh random variables. 
+% You can use the EXPRND and RAYRND functions in MATLAB for this. 
+% Derive by hand, and implement ML estimators in MATLAB and plot the MSE with respect to # of observations. 
+% On separate plots, plot the bias and the variance of your estimators, with respect to the # of observations. 
+% Do this for a couple of values of lambda.
+
+%setup
+N = 1000000;
+observation = 3:13;
+lambda = [1 5 10];
+alpha = [1 5 10];
+
+%pre-allocate memory 
+MSE_exp1 = zeros(1,length(observation));
+bias_exp1 = zeros(1,length(observation));
+var_exp1 = zeros(1,length(observation));
+
+MSE_exp2 = zeros(1,length(observation));
+bias_exp2 = zeros(1,length(observation));
+var_exp2 = zeros(1,length(observation));
+
+MSE_exp3 = zeros(1,length(observation));
+bias_exp3 = zeros(1,length(observation));
+var_exp3 = zeros(1,length(observation));
+
+MSE_rayleigh1 = zeros(1,length(observation));
+bias_ray1 = zeros(1,length(observation));
+var_ray1 = zeros(1,length(observation));
+
+MSE_rayleigh2 = zeros(1,length(observation));
+bias_ray2 = zeros(1,length(observation));
+var_ray2 = zeros(1,length(observation));
+
+MSE_rayleigh3 = zeros(1,length(observation));
+bias_ray3 = zeros(1,length(observation));
+var_ray3 = zeros(1,length(observation));
+
+ind=1;
+for i = observation
+    %calculate the MSE, bias and variance for each distribution and for
+    %each # of observation
+    
+    %MSE is found by taking the mean square of the ML
+    %estimator-(lambda if exponential; alpha if Rayleigh)
+    
+    %bias is found by taking the mean of the ML estimator and subtracting
+    %alpha/lambda from the mean
+    
+    %variance is found by taking the variance of the ML estimator  
+
+    [MSE_exp1(ind),bias_exp1(ind),var_exp1(ind)]= exponential_mse_bias_variance(N,i,lambda(1));
+    [MSE_exp2(ind),bias_exp2(ind),var_exp2(ind)]= exponential_mse_bias_variance(N,i,lambda(2));
+    [MSE_exp3(ind),bias_exp3(ind),var_exp3(ind)]= exponential_mse_bias_variance(N,i,lambda(3));
+    [MSE_rayleigh1(ind),bias_ray1(ind),var_ray1(ind)]=rayleigh_mse_bias_variance(N,i,alpha(1));
+    [MSE_rayleigh2(ind),bias_ray2(ind),var_ray2(ind)]=rayleigh_mse_bias_variance(N,i,alpha(2));
+    [MSE_rayleigh3(ind),bias_ray3(ind),var_ray3(ind)]=rayleigh_mse_bias_variance(N,i,alpha(3));
+    
+    ind=ind+1;
+end
+
+% plot the MSE for exponential and rayleigh distributions
+figure;
+subplot(1,2,1);
+plot(observation, MSE_exp1, observation, MSE_exp2, observation,MSE_exp3);
+title("Exponential MSE");
+xlabel("Number of Observations");
+ylabel("MSE");
+legend("\lambda = " + lambda(1), "\lambda = " + lambda(2),"\lambda = " + lambda(3));
+
+subplot(1,2,2);
+plot(observation, MSE_rayleigh1, observation, MSE_rayleigh2, observation, MSE_rayleigh3);
+title("Rayleigh MSE");
+xlabel("Number of Observations");
+ylabel("MSE");
+legend("\alpha = " + alpha(1), "\alpha = " + alpha(2),"\alpha = " + alpha(3));
+
+%plot the bias for exponential and rayleigh distributions
+figure;
+subplot(1,2,1);
+plot(observation, bias_exp1, observation, bias_exp2, observation, bias_exp3);
+title("Exponential Bias");
+xlabel("Number of Observations");
+ylabel("Bias");
+legend("\lambda = " + lambda(1), "\lambda = " + lambda(2),"\lambda = " + lambda(3));
+
+
+subplot(1,2,2);
+plot(observation, bias_ray1, observation, bias_ray2,observation,bias_ray3);
+title("Rayleigh Bias");
+xlabel("Number of Observations");
+ylabel("Bias");
+legend("\alpha = " + alpha(1), "\alpha = " + alpha(2),"\alpha = " + alpha(3));
+
+%plot the variance for exponential and rayleigh distributions
+figure;
+subplot(1,2,1);
+plot(observation, var_exp1, observation, var_exp2, observation, var_exp3);
+title("Exponential Variance");
+xlabel("Number of Observations");
+ylabel("Variance");
+legend("\lambda = " + lambda(1), "\lambda = " + lambda(2),"\lambda = " + lambda(3));
+
+subplot(1,2,2);
+plot(observation, var_ray1, observation, var_ray2,observation,var_ray3);
+title("Rayleigh Variance");
+xlabel("Number of Observations");
+ylabel("Variance");
+legend("\alpha = " + alpha(1), "\alpha = " + alpha(2),"\alpha = " + alpha(3));
+
+
+
+%% Part 2
+% The data in the .mat file, data.mat, has been drawn from either an exponential distribution, or a Rayleigh distribution. 
+% Compute the max-likelihood estimate of the parameter using both. 
+% Using your estimators that you developed in part 2, compute the max-likelihood estimates of the parameter. 
+% Which distribution do you think the data was drawn from? Justify your answer.
+
+load data.mat;
+data1 = data.'; % transpose data into column format so each observation is in a separate row
+[~, size] = size(data); % get the number of columns in data matrix and store in size variable
+
+%calculate the ML estimators
+alphaEstimator = sqrt(.5 * mean(data.^2, 2)); % square root of half the mean of the squared observations
+lambdaEstimator = size./sum(data,2); % calculate sum of observations in each row, lambda is the ratio o fthe number of observations to the sum of observations
+
+%get the sum of log likelihoods for exponential and rayleigh distribution 
+%the pdf of an exponential distribution is given as lambdaEstimator * exp(-lambdaEstimator * data1
+%the pdf of a Rayleigh distribution is given as data1/alphaEstimator^2 .*exp(-data1.^2/(2*alphaEstimator^2))
+%sum of the the logarithms of the likelihoods
+
+exponentialLikelihood=sum(log(lambdaEstimator * exp(-lambdaEstimator * data1))); 
+rayleighLikelihood= sum(log(data1/alphaEstimator^2 .* exp(-data1.^2/(2*alphaEstimator^2))));
+
+disp("The sum of log likelihoods for exponential distribution is " +exponentialLikelihood)
+disp("The sum of log likelihoods for rayleigh distribution is "+rayleighLikelihood)
+
+%The log likelihood value measures how well a model fits. The higher the value, the better
+%the fit is. Since the rayleigh distribution has a higher likelihood, the data was most
+%likely drawn from a rayleigh distribution. 
+
+
+% calculate mse, bias, and variance of the maximum likelihood estimator of
+% the scale parameter alpha of the Rayleigh distribution given i
+% observations from the distribution
+function [mse, bias, variance] = rayleigh_mse_bias_variance(N,i,alpha)
+    rayleigh = raylrnd(alpha, [N i]); % generate N samples of i observations from Rayleigh distribution with alpha
+    avg=mean(rayleigh.^2,2); % calculate sample mean of squared observations for each sample
+    alpha2 = sqrt(.5 * avg); % calculate ML estimator of alpha using sample mean
+    mse= mean((alpha - alpha2).^2); % calculate MSE of ML estimator by taking mean squared difference between alpha and ML estimator of alpha across all N samples
+    bias = mean(alpha2) - alpha; % calculate bias of ML estimator
+    variance = var(alpha2); % calculate variance of ML estimator using the vector of alpha2 values
+
+
+end
+
+
+function [mse, bias, variance] = exponential_mse_bias_variance(N,i,lambda)
+    exponential = exprnd(1/lambda, [N i]); % generate N samples of i observations from exponential distribution with lambda 
+    add=sum(exponential,2); % calculate sum of observations for each sample 
+    lambda2 =i ./ add; % calculate ML estimator of lambda using sample sum of observations 
+    mse = mean((lambda- lambda2).^2); % calculate MSE of ML estimator by taking mean squared difference between lambda and ML estimator of lambda across all N samples
+    bias= mean(lambda2) - lambda; % calculate bias of ML estimator
+    variance = var(lambda2); % calculate variance of ML estimator using the vector of lambda2 values
+
+
+end
+##### SOURCE END #####
+--></body></html>

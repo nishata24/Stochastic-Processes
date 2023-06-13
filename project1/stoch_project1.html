@@ -1,0 +1,351 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Project 1: DND</title><meta name="generator" content="MATLAB 9.14"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2023-05-01"><meta name="DC.source" content="stoch_project1.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Project 1: DND</h1><!--introduction--><p>Nishat Ahmed, Nicolette Thiro, Armaan Kapoor</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Epic Question 2. Wizards, Trolls and Warriors.</a></li></ul></div><h2 id="1">Epic Question 2. Wizards, Trolls and Warriors.</h2><p>Despite being completely average, there is a mighty and powerful wizard named Keene, who is suddenly ambushed by a menacing group of trolls. The reason for the trolls hatred of Keene is unclear, but they are often heard screeching the word &#8220;stochastics&#8221; in a bloody rage. Every troll has 1d4 hit points, which are the amount of damage they can take before dying. The wizard Keene has unfortunately been out drinking the night before, and can only remember 1 spell, FIREBALL, which does 2d2 damage to everything within range. For example if a troll has 3 HP, and the FIREBALL does 3 points of damage, the troll is dead.</p><pre class="codeinput">trials = 1000000;
+HP_roll = sum((randi([1,4], 1, trials)), 1); <span class="comment">%1d4 HP for every troll</span>
+
+fireball_roll = sum(randi([1,2], 2, trials), 1); <span class="comment">%fireball does 2d2 damage</span>
+
+<span class="comment">%a: What is the average number of hit points that each troll has?</span>
+<span class="comment">% What is the average amount of damage the FIREBALL spell does?</span>
+<span class="comment">% Find a bound on the probability that the FIREBALL does greater than 3 points of damage.</span>
+
+HP_avg = sum(HP_roll)/trials; <span class="comment">%avg number of HP (hit points) each troll has</span>
+fprintf(<span class="string">"Average number of HP each troll has: %f\n"</span>, HP_avg);
+
+fireball_avg = sum(fireball_roll)/trials; <span class="comment">%avg amount of fireball spell damage</span>
+fprintf(<span class="string">"Average amount of damage fireball spell does: %f\n"</span>, fireball_avg);
+
+<span class="comment">%bound on the probability that fireball spell does damage greater than 3 points</span>
+count = 0;
+<span class="keyword">for</span> i=1:trials
+    <span class="keyword">if</span> fireball_roll(i) &gt; 3 <span class="comment">%count instances of greater than 3 points of damage</span>
+        count = count + 1;
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+fireball_prob = count/trials; <span class="comment">% get probability of more than 3 points of damage</span>
+fprintf(<span class="string">"Bound on probability that fireball spell does greater than 3 points of damage: %f\n"</span>, fireball_prob);
+
+<span class="comment">%b: Write the probability mass functions for the amount of damage the FIREBALL does and the amount of hit points trolls have.</span>
+<span class="comment">%pmf for fireball damage</span>
+pmf_fireball(1) = sum(fireball_roll==2)/size(fireball_roll, 2); <span class="comment">%fireball does 1 point damage</span>
+pmf_fireball(2) = sum(fireball_roll==3)/size(fireball_roll, 2); <span class="comment">%fireball does 2 points damage</span>
+pmf_fireball(3) = sum(fireball_roll==4)/size(fireball_roll, 2); <span class="comment">%fireball does 3 points damage</span>
+
+<span class="comment">%pmf for HP trolls have</span>
+
+<span class="comment">%pmf for troll having 1 HP</span>
+HP_1 = zeros(1, size(HP_roll, 2));
+<span class="keyword">for</span> i = 1:size(HP_roll, 2) <span class="comment">%iterate through HP_roll</span>
+    <span class="keyword">if</span> HP_roll(i) == 1
+        HP_1(i) = HP_roll(i); <span class="comment">%find HP value of 1 and store in HP_1</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+pmf_HP(1) = sum(HP_1)/trials;
+
+<span class="comment">%pmf for troll having 2 HP</span>
+HP_2 = zeros(1, size(HP_roll, 2));
+<span class="keyword">for</span> i = 1:size(HP_roll, 2) <span class="comment">%iterate through HP_roll</span>
+    <span class="keyword">if</span> HP_roll(i) == 1
+        HP_2(i) = HP_roll(i); <span class="comment">%find HP value of 2 and store in HP_1</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+pmf_HP(2) = sum(HP_2)/trials;
+
+<span class="comment">%pmf for troll having 3 HP</span>
+HP_3 = zeros(1, size(HP_roll, 2));
+<span class="keyword">for</span> i = 1:size(HP_roll, 2) <span class="comment">%iterate through HP_roll</span>
+    <span class="keyword">if</span> HP_roll(i) == 1
+        HP_3(i) = HP_roll(i); <span class="comment">%find HP value of 3 and store in HP_1</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+pmf_HP(3) = sum(HP_3)/trials;
+
+<span class="comment">%pmf for troll having 4 HP</span>
+HP_4 = zeros(1, size(HP_roll, 2));
+<span class="keyword">for</span> i = 1:size(HP_roll, 2) <span class="comment">%iterate through HP_roll</span>
+    <span class="keyword">if</span> HP_roll(i) == 1
+        HP_4(i) = HP_roll(i); <span class="comment">%find HP value of 4 and store in HP_1</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+pmf_HP(4) = sum(HP_4)/trials;
+
+<span class="comment">%HP pmf plot</span>
+figure;
+subplot(2, 1, 1);
+stem(pmf_HP);
+xticks([1,2,3,4]);
+title(<span class="string">"PMF of HP Trolls"</span>)
+xlabel(<span class="string">"HP"</span>)
+ylabel(<span class="string">"Probability"</span>);
+subplot(2, 1, 2);
+
+<span class="comment">%fireball pmf plot</span>
+stem(pmf_fireball);
+xticks([2,3,4]);
+title(<span class="string">"PMF of Fireball Damage"</span>)
+xlabel(<span class="string">"Fireball Damage"</span>);
+ylabel(<span class="string">"Probability"</span>);
+
+<span class="comment">%c: Suppose there are 6 trolls, and they are all within range of the FIREBALL.</span>
+<span class="comment">% What is the probability that Keene slays all the trolls with this spell?</span>
+
+HP_6 = randi([1,4], 6, trials); <span class="comment">%HP for 6 trolls</span>
+slayed_count = 0; <span class="comment">%keep count of rounds in which all 6 trolls have been slayed</span>
+<span class="keyword">for</span> i = 1:trials <span class="comment">%iterations = number of simulations</span>
+    slayed = 0; <span class="comment">%keep count of trolls slayed with fireball spell in each round of simulation</span>
+    <span class="keyword">for</span> k = 1:6
+        <span class="keyword">if</span> HP_6(k, i) &lt;= fireball_roll(i)
+            slayed = slayed + 1; <span class="comment">%update slayed trolls count if HP of troll is less than or equal to fireball</span>
+        <span class="keyword">else</span>
+            remaining_troll = k; <span class="comment">%store surviving troll for part d</span>
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+    <span class="keyword">if</span> slayed == 6
+        slayed_count = slayed_count + 1; <span class="comment">%update count of rounds in which all 6 trolls have been slayed</span>
+    <span class="keyword">end</span>
+    <span class="keyword">if</span> slayed == 5
+        remaining_HP = HP_6(remaining_troll, i) - fireball_roll(i); <span class="comment">%HP surviving troll has for part d</span>
+
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+prob_slayed = slayed_count/trials; <span class="comment">%probability all 6 trolls are slayed</span>
+fprintf(<span class="string">"Probability no trolls survived: %f\n"</span>, prob_slayed);
+
+<span class="comment">%d: Given that 5 trolls perished, what is the expected amount of hit points that the remaining troll has?</span>
+fprintf(<span class="string">"HP of surviving troll: %f\n"</span>, remaining_HP)
+
+<span class="comment">%e: What is the expected amount of damage Shedjam would do to the Wizard Keene per attack?</span>
+sword_of_tuition = sum((randi([1,6], 2, trials)), 1); <span class="comment">%sword of tuition does 2d6 damage</span>
+hammer_of_tenure = sum((randi([1,4], 1, trials)), 1); <span class="comment">%hammer of tenure does 1d4 damage</span>
+attacks = zeros(1, trials);
+
+<span class="keyword">for</span> i = 1:trials
+    <span class="keyword">if</span>(randi([1,20], 1, 1) &gt;= 11)
+        attacks(i) = sword_of_tuition(i); <span class="comment">%if roll is &gt; 11 on a 20 sided die, keene attacked with sword</span>
+        <span class="keyword">if</span>(randi([1,20], 1, 1) &gt;= 11) <span class="comment">%if roll after sword is &gt; 11 on a 20 sided die, keene attacked with hammer</span>
+            attacks(i) = attacks(i) + hammer_of_tenure(i); <span class="comment">%damage by hammer added to damage by sword</span>
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+avg_damage = mean(attacks); <span class="comment">%expected amount of damage to Wizard Keene per attack</span>
+fprintf(<span class="string">"Expected amount of damage Shedjam would do to Wizard Keene per attack: %f"</span>, avg_damage);
+</pre><pre class="codeoutput">Average number of HP each troll has: 2.499732
+Average amount of damage fireball spell does: 2.999640
+Bound on probability that fireball spell does greater than 3 points of damage: 0.249505
+Probability no trolls survived: 0.342609
+HP of surviving troll: 1.000000
+Expected amount of damage Shedjam would do to Wizard Keene per attack: 4.126129</pre><img vspace="5" hspace="5" src="stoch_project1_01.png" alt=""> <p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2023a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Project 1: DND
+% Nishat Ahmed, Nicolette Thiro, Armaan Kapoor
+
+%% Epic Question 2. Wizards, Trolls and Warriors. 
+% Despite being completely average, there is a mighty and powerful wizard named Keene, who is suddenly ambushed by a menacing group of trolls. 
+% The reason for the trolls hatred of Keene is unclear, but they are often heard screeching the word “stochastics” in a bloody rage. 
+% Every troll has 1d4 hit points, which are the amount of damage they can take before dying. 
+% The wizard Keene has unfortunately been out drinking the night before, and can only remember 1 spell, FIREBALL, which does 2d2 damage to everything within range. For example if a troll has 3 HP, and the FIREBALL does 3 points of damage, the troll is dead.
+
+trials = 1000000;
+HP_roll = sum((randi([1,4], 1, trials)), 1); %1d4 HP for every troll 
+
+fireball_roll = sum(randi([1,2], 2, trials), 1); %fireball does 2d2 damage
+
+%a: What is the average number of hit points that each troll has? 
+% What is the average amount of damage the FIREBALL spell does? 
+% Find a bound on the probability that the FIREBALL does greater than 3 points of damage.
+
+HP_avg = sum(HP_roll)/trials; %avg number of HP (hit points) each troll has
+fprintf("Average number of HP each troll has: %f\n", HP_avg); 
+
+fireball_avg = sum(fireball_roll)/trials; %avg amount of fireball spell damage
+fprintf("Average amount of damage fireball spell does: %f\n", fireball_avg);
+
+%bound on the probability that fireball spell does damage greater than 3 points
+count = 0;
+for i=1:trials
+    if fireball_roll(i) > 3 %count instances of greater than 3 points of damage
+        count = count + 1;
+    end
+end 
+fireball_prob = count/trials; % get probability of more than 3 points of damage
+fprintf("Bound on probability that fireball spell does greater than 3 points of damage: %f\n", fireball_prob);
+
+%b: Write the probability mass functions for the amount of damage the FIREBALL does and the amount of hit points trolls have.
+%pmf for fireball damage
+pmf_fireball(1) = sum(fireball_roll==2)/size(fireball_roll, 2); %fireball does 1 point damage
+pmf_fireball(2) = sum(fireball_roll==3)/size(fireball_roll, 2); %fireball does 2 points damage 
+pmf_fireball(3) = sum(fireball_roll==4)/size(fireball_roll, 2); %fireball does 3 points damage
+
+%pmf for HP trolls have 
+
+%pmf for troll having 1 HP
+HP_1 = zeros(1, size(HP_roll, 2));
+for i = 1:size(HP_roll, 2) %iterate through HP_roll
+    if HP_roll(i) == 1
+        HP_1(i) = HP_roll(i); %find HP value of 1 and store in HP_1
+    end
+end 
+pmf_HP(1) = sum(HP_1)/trials;
+
+%pmf for troll having 2 HP 
+HP_2 = zeros(1, size(HP_roll, 2));
+for i = 1:size(HP_roll, 2) %iterate through HP_roll
+    if HP_roll(i) == 1
+        HP_2(i) = HP_roll(i); %find HP value of 2 and store in HP_1
+    end
+end 
+pmf_HP(2) = sum(HP_2)/trials;
+
+%pmf for troll having 3 HP 
+HP_3 = zeros(1, size(HP_roll, 2));
+for i = 1:size(HP_roll, 2) %iterate through HP_roll
+    if HP_roll(i) == 1
+        HP_3(i) = HP_roll(i); %find HP value of 3 and store in HP_1
+    end
+end 
+pmf_HP(3) = sum(HP_3)/trials;
+
+%pmf for troll having 4 HP 
+HP_4 = zeros(1, size(HP_roll, 2));
+for i = 1:size(HP_roll, 2) %iterate through HP_roll
+    if HP_roll(i) == 1
+        HP_4(i) = HP_roll(i); %find HP value of 4 and store in HP_1
+    end
+end 
+pmf_HP(4) = sum(HP_4)/trials;
+
+%HP pmf plot
+figure;
+subplot(2, 1, 1);
+stem(pmf_HP);
+xticks([1,2,3,4]);
+title("PMF of HP Trolls")
+xlabel("HP")
+ylabel("Probability");
+subplot(2, 1, 2);
+
+%fireball pmf plot
+stem(pmf_fireball);
+xticks([2,3,4]);
+title("PMF of Fireball Damage")
+xlabel("Fireball Damage");
+ylabel("Probability");
+
+%c: Suppose there are 6 trolls, and they are all within range of the FIREBALL. 
+% What is the probability that Keene slays all the trolls with this spell?
+
+HP_6 = randi([1,4], 6, trials); %HP for 6 trolls
+slayed_count = 0; %keep count of rounds in which all 6 trolls have been slayed
+for i = 1:trials %iterations = number of simulations 
+    slayed = 0; %keep count of trolls slayed with fireball spell in each round of simulation
+    for k = 1:6 
+        if HP_6(k, i) <= fireball_roll(i) 
+            slayed = slayed + 1; %update slayed trolls count if HP of troll is less than or equal to fireball
+        else
+            remaining_troll = k; %store surviving troll for part d
+        end
+    end
+    if slayed == 6
+        slayed_count = slayed_count + 1; %update count of rounds in which all 6 trolls have been slayed
+    end
+    if slayed == 5
+        remaining_HP = HP_6(remaining_troll, i) - fireball_roll(i); %HP surviving troll has for part d
+
+    end
+end
+
+prob_slayed = slayed_count/trials; %probability all 6 trolls are slayed
+fprintf("Probability no trolls survived: %f\n", prob_slayed);
+
+%d: Given that 5 trolls perished, what is the expected amount of hit points that the remaining troll has?
+fprintf("HP of surviving troll: %f\n", remaining_HP)
+
+%e: What is the expected amount of damage Shedjam would do to the Wizard Keene per attack?
+sword_of_tuition = sum((randi([1,6], 2, trials)), 1); %sword of tuition does 2d6 damage 
+hammer_of_tenure = sum((randi([1,4], 1, trials)), 1); %hammer of tenure does 1d4 damage
+attacks = zeros(1, trials);
+
+for i = 1:trials
+    if(randi([1,20], 1, 1) >= 11) 
+        attacks(i) = sword_of_tuition(i); %if roll is > 11 on a 20 sided die, keene attacked with sword
+        if(randi([1,20], 1, 1) >= 11) %if roll after sword is > 11 on a 20 sided die, keene attacked with hammer
+            attacks(i) = attacks(i) + hammer_of_tenure(i); %damage by hammer added to damage by sword
+        end
+    end
+end
+
+avg_damage = mean(attacks); %expected amount of damage to Wizard Keene per attack 
+fprintf("Expected amount of damage Shedjam would do to Wizard Keene per attack: %f", avg_damage);
+
+
+##### SOURCE END #####
+--></body></html>

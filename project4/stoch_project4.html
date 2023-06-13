@@ -1,0 +1,702 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Stochastics Project 4</title><meta name="generator" content="MATLAB 9.14"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2023-05-01"><meta name="DC.source" content="stoch_project4.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Stochastics Project 4</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Nishat Ahmed, Armaan Kapoor, Nicolette Thiro</a></li><li><a href="#2">Part 1 Radar Detection</a></li><li><a href="#3">Part 2 Pattern Classification and Machine Learning</a></li></ul></div><h2 id="1">Nishat Ahmed, Armaan Kapoor, Nicolette Thiro</h2><pre class="codeinput">clc;
+clear;
+close <span class="string">all</span>;
+</pre><h2 id="2">Part 1 Radar Detection</h2><pre class="codeinput"><span class="comment">% a) Derive and implement in MATLAB the MAP rule for detecting the target.</span>
+<span class="comment">% Run 1000 iterations of your detector; compare the probability of error with the theoretical probability of error.</span>
+
+N = 1000; <span class="comment">% iterations</span>
+<span class="comment">%priori probabilities</span>
+prob_target = 0.8; <span class="comment">% probability target is there</span>
+prob_not_target = 0.2; <span class="comment">% probability target isn't there</span>
+
+eta = prob_target/prob_not_target; <span class="comment">% ratio of priori probabilities</span>
+variance = 1; <span class="comment">% variance of noise</span>
+std_dev = sqrt(variance);
+a = 1; <span class="comment">% mean difference (difference between population means)</span>
+
+target = (rand(N,1) &gt; prob_target); <span class="comment">% generate N random samples that represent target is present (if 1) or target is not present (if 0)</span>
+A = a * double(target); <span class="comment">% create signal that is a for samples where target is 1 (present) and 0 otherwise (not present)</span>
+X = sqrt(variance) * rand(N,1); <span class="comment">% create noise process by drawing N samples from 0 mean Gaussian distribution with variance</span>
+
+Y = A + X; <span class="comment">% noisy observation of A, used to perform detection using MAP rule</span>
+
+<span class="comment">% MAP rule: used to estimate unknown parameter based on a set of</span>
+<span class="comment">% observations, selects estimate that maximizes prior probability</span>
+<span class="comment">% gamma: threshold value that is the decision boundary that separates 2 hypotheses (target is there vs. isn't there)</span>
+<span class="comment">% gamma calculated using MAP rule when likelihood function is Gaussian and</span>
+<span class="comment">% priori probabilities are uniform</span>
+gamma = a ./ 2 + variance * log(eta) ./ (a);
+
+<span class="comment">% normcdf used to get cdf of standard normal distribution</span>
+<span class="comment">% compute probabilities of the 2 hypotheses based on calculated gamma</span>
+p1 = 1 - normcdf(gamma, 0, std_dev); <span class="comment">% target not there probability</span>
+p2 = normcdf(gamma, a, std_dev); <span class="comment">% target is there probability</span>
+
+<span class="comment">% theoretical error rate of decision rule</span>
+<span class="comment">% expected probability of error under given prior probabilities and decision rule</span>
+theoretical_error = prob_target * p1 + prob_not_target * p2;
+
+<span class="comment">% experimental probability of error</span>
+<span class="comment">% and(Y &gt; gamma, target): subset of observations that are above threshold</span>
+<span class="comment">% gamma and target is present</span>
+<span class="comment">% and(Y &lt;= gamma, ~target): subset of observations that are below or at</span>
+<span class="comment">% threshold gamma and target is not present</span>
+<span class="comment">% or: used to identify all observations that are targets above the</span>
+<span class="comment">% threshold or not targets below the threshold</span>
+incorrect_predictions = or(and(Y &gt; gamma, target), and(Y &lt;= gamma, ~target));
+
+<span class="comment">%sum: counts all observations that meet the conditions</span>
+<span class="comment">% experimental error rate computed as the proportional of observations that</span>
+<span class="comment">% are misclassified (not in the subset) divided by total observations N</span>
+experimental_error = 1 - sum(incorrect_predictions(:)) / N;
+
+disp(<span class="string">"Theoretical Error = "</span> + theoretical_error);
+disp(<span class="string">"Experimental Error = "</span> + experimental_error);
+
+<span class="comment">% b) Implement a simulation that plots the receiver operating curve for this detector.</span>
+<span class="comment">% Plot the receiver operating curve for several signal to noise ratios.</span>
+
+a2 = [0.5, 1, 2, 4]; <span class="comment">% simulate detection system for these 4 SNR values</span>
+
+<span class="comment">% vector of N values logarithmically spaced between 10^-7 and 10^7, which</span>
+<span class="comment">% represents the threshold parameter for the detection system</span>
+eta2 = logspace(-7, 7, N);
+variance2 = 1; <span class="comment">% variance of noise</span>
+<span class="comment">% length(a2)=4</span>
+
+<span class="comment">% pre-allocate space for false positives, true positives, and SNR values</span>
+false_pos = zeros(4, 1, N);
+true_pos = zeros(4, 1, N);
+SNR = zeros(4, 1, N);
+
+<span class="keyword">for</span> i = 1:4
+    target2 = (rand(N,1) &gt; prob_target); <span class="comment">% generate N random samples for each a2 value</span>
+    A2 = a2(i) * double(target2); <span class="comment">% create signal that is a2(i) for samples where target is 1 (present) and 0 otherwise (not present)</span>
+    X2 = sqrt(variance2) * randn(N,1); <span class="comment">% create noise process by drawing N samples from 0 mean Gaussian distribution with variance2</span>
+
+    Y2 = A2 + X2; <span class="comment">% noisy observation of A2, used to perform detection using MAP rule</span>
+
+    <span class="comment">% calculate threshold gamma according to MAP rule</span>
+    gamma2 = a2(i)/2 + variance2 * log(eta2) / a2(i);
+
+    <span class="comment">% calculate false pos, true pos, and SNR values for each a2 value and</span>
+    <span class="comment">% eta2 value</span>
+    <span class="comment">% and(Y2 &gt;gamma2, ~target2): above threshold but target is not present</span>
+    <span class="comment">% and(Y2 &gt;gamma2, target2): above threshold and target is present</span>
+    false_pos(i, :, :) = sum(and(Y2 &gt;gamma2, ~target2)) / sum(~target2); <span class="comment">% false positive probability</span>
+    true_pos(i, :, :) = sum(and(Y2 &gt;gamma2, target2)) ./ sum(target2); <span class="comment">% true positive probability</span>
+
+    SNR(i) = a2(i) / variance2; <span class="comment">% ratio of power of target signal to power of noise</span>
+<span class="keyword">end</span>
+
+<span class="comment">% plot detection system performance for the a2 values</span>
+figure;
+colors = {<span class="string">'blue'</span>, <span class="string">'red'</span>, <span class="string">'green'</span>, <span class="string">'magenta'</span>}; <span class="comment">% Define an array of colors</span>
+<span class="keyword">for</span> i = 1:4
+    x = reshape(false_pos(i, :, :), [1,N]);
+    y = reshape(true_pos(i, :, :), [1,N]);
+    line(x, y, <span class="string">'DisplayName'</span>, [<span class="string">'SNR = '</span>, num2str(SNR(i))], <span class="string">'linewidth'</span>, 1, <span class="string">'color'</span>, colors{i});
+    hold <span class="string">on</span>;
+<span class="keyword">end</span>
+
+legend(<span class="string">'Location'</span>, <span class="string">'best'</span>);
+xlabel(<span class="string">'False Positive'</span>)
+ylabel(<span class="string">'True Positive'</span>)
+title(<span class="string">'Receiver Operating Curve (ROC)'</span>)
+
+<span class="comment">% c) Assume that missing the target is 10 times worse than falsely detecting the target.</span>
+<span class="comment">% What is the decision rule that minimizes the conditional risk?</span>
+<span class="comment">% Mark this point on your receiver operating curve for at least one SNR value.</span>
+
+eta3 = (0.1) * prob_target /prob_not_target; <span class="comment">% priori probability of target signal being present in the received signal</span>
+a3 =2; <span class="comment">% chosen SNR value to mark</span>
+variance3 = 1; <span class="comment">% variance of noise</span>
+
+target3 = (rand(N,1) &gt; prob_target); <span class="comment">% generate N random samples that represent target is present (if 1) or target is not present (if 0)</span>
+A3 = a3 * double(target3); <span class="comment">% create signal that is a3 for samples where target is 1 (present) and 0 otherwise (not present)</span>
+X3 = sqrt(variance3) * randn(N,1); <span class="comment">% create noise process by drawing N samples from 0 mean Gaussian distribution with variance3</span>
+
+Y3 = A3 + X3; <span class="comment">% noisy observation of A3, used to perform detection using MAP rule</span>
+
+<span class="comment">% calculate threshold gamma using MAP rule and constants defined above</span>
+gamma3 = a3/2 + variance3 * log(eta3) / a3;
+
+<span class="comment">% count numbers of times Y3 exceeds threshold gamma3 for when the target is not</span>
+<span class="comment">% present and divide by total number of non-target values</span>
+false_pos2 = sum(and(Y3 &gt; gamma3, ~target3)) / sum(~target3); <span class="comment">%false positive probability</span>
+
+<span class="comment">% count numbers of times Y3 exceeds threshold gamma3 for when the target is</span>
+<span class="comment">% present and divide by total number of target values</span>
+true_pos2 = sum(and(Y3 &gt; gamma3, target3)) ./ sum(target3); <span class="comment">% true positive probability</span>
+
+figure;
+x = reshape(false_pos(3, :, :), [1,N]);
+y = reshape(true_pos(3, :, :), [1,N]);
+line(x, y, <span class="string">'DisplayName'</span>, [<span class="string">'SNR = '</span>, num2str(SNR(3))], <span class="string">'linewidth'</span>, 1); <span class="comment">% plot ROC curve for third SNR value</span>
+hold <span class="string">on</span>;
+
+<span class="comment">% d) Using the cost structure in part c), Select one SNR value and plot the value of the expected</span>
+<span class="comment">% cost for a range of a priori target present probabilities from 0 to 1.</span>
+
+<span class="comment">% plot point corresponding to (false_pos2, true_pos2) pair on ROC curve for</span>
+<span class="comment">% eta value of .4</span>
+scatter(false_pos2, true_pos2, <span class="string">'*'</span>, <span class="string">'DisplayName'</span>, <span class="string">'\eta = 0.4'</span>);
+xlabel(<span class="string">'False Positive'</span>);
+ylabel(<span class="string">'True Positive'</span>);
+title([<span class="string">'Receiver Operating Curve (ROC)'</span> <span class="keyword">...</span>
+        <span class="string">'(\eta = 0.4), SNR = '</span>, num2str(SNR(3))]);
+legend;
+
+<span class="comment">% e) Now, repeat parts a and b, but change the model such that the target present remains Y = A+X but the target not present model is now Y = A+Z</span>
+<span class="comment">% where Z is a zero mean Gaussian random variable with &#963;2z &gt; &#963;2. Plot a few receiver operating curves for different ratios of &#963;2z to &#963;2.</span>
+
+<span class="comment">% redo a)</span>
+
+<span class="comment">% set values</span>
+eta = prob_target/prob_not_target; <span class="comment">% ratio of priori probabilities</span>
+variance_x = 1; <span class="comment">% variance of noise</span>
+variance_z = 25; <span class="comment">% variance of noise</span>
+std_dev_x = sqrt(variance_x);
+std_dev_z = sqrt(variance_z);
+
+target = (rand(N,1) &gt; prob_target); <span class="comment">% generate N random samples that represent target is present (if 1) or target is not present (if 0)</span>
+A = a * double(target); <span class="comment">% create signal that is a for samples where target is 1 (present) and 0 otherwise (not present)</span>
+X = std_dev_x * randn(N,1); <span class="comment">% create noise process by drawing N samples from 0 mean Gaussian distribution with variance</span>
+Z = std_dev_z * randn(N,1); <span class="comment">% create noise process by drawing N samples from 0 mean Gaussian distribution with variance</span>
+
+<span class="comment">% add target signal to noise X for samples where target is present</span>
+<span class="comment">% and noise Z for samples where target is not present</span>
+Y = a + X .* target + Z .* (~target);
+
+<span class="comment">% calculate decision threshold gamma</span>
+gamma = sqrt(2 * ((variance_x * variance_z)/(variance_x - variance_z)) * <span class="keyword">...</span>
+                log(eta * sqrt(variance_x/variance_z)));
+
+<span class="comment">% probability of false positive (system detects target when it is not present)</span>
+p1 = normcdf(gamma, 0, std_dev_z) - normcdf(-gamma, 0, std_dev_z); <span class="comment">% difference between cdf of 0 mean Gaussian distribution with std_dev_z evaluated at gamma and -gamma</span>
+
+<span class="comment">% probability of a miss (system fails to detect target when it is present)</span>
+p2 = 2 * (1 - normcdf(gamma, 0, std_dev_x)); <span class="comment">% twice the difference between 1 and cdf of 0 mean Gaussian distribution with std_dev_x evaluated at gamma</span>
+
+<span class="comment">% theoretical probability of error</span>
+theoretical_error = (p1 * prob_target) + (p2 * prob_not_target); <span class="comment">% weighted sum of p1 and p2 with weights being probabilities of target being present and not present, respectively</span>
+
+<span class="comment">% experimental probability of error</span>
+<span class="comment">% compare pdfs of the signal plus noise process Y given that the target is</span>
+<span class="comment">% present and that the target is not present</span>
+<span class="comment">% then check if pdf of Y given that the target is present is greater than</span>
+<span class="comment">% the pdf of Y given that the target is not present</span>
+<span class="comment">% then sum all errors and divide by the number of samples N</span>
+experimental_error = sum(<span class="keyword">...</span>
+  (prob_target * (1 / sqrt(variance_z * 2 * pi)) * exp(-((Y - a).^2) / (2 * variance_z))) &gt; <span class="keyword">...</span>
+  (prob_not_target * (1 / sqrt(variance_x * 2 * pi)) * exp(-((Y - a).^2) / (2 * variance_x))) &amp; target | <span class="keyword">...</span>
+  (prob_target * (1 / sqrt(variance_z * 2 * pi)) * exp(-((Y - a).^2) / (2 * variance_z))) &lt;= <span class="keyword">...</span>
+  (prob_not_target * (1 / sqrt(variance_x * 2 * pi)) * exp(-((Y - a).^2) / (2 * variance_x))) &amp; ~target) / N;
+
+disp(<span class="string">"Theoretical Error = "</span> + theoretical_error);
+disp(<span class="string">"Experimental Error = "</span> + experimental_error);
+
+<span class="comment">% redo b)</span>
+
+variance_z = [4, 9, 16, 25]; <span class="comment">% values for variance of z</span>
+std_dev_z = sqrt(variance_z);
+
+<span class="comment">% vector of 500 values logarithmically spaced between -5 and 3, which</span>
+<span class="comment">% represents the threshold parameter for the detection system</span>
+eta = logspace(-5,3,500);
+
+<span class="comment">% pre-allocate space</span>
+false_pos = zeros(4, 1, 500);
+true_pos = zeros(4, 1, 500);
+stdz_stdx = zeros(4, 1, N);
+
+<span class="keyword">for</span> i = 1:4 <span class="comment">% iterate through 4 different values for the variance of the signal</span>
+    target = (rand(N,1) &gt; prob_target); <span class="comment">% generate N random samples for each a2 value</span>
+    A = a * double(target); <span class="comment">% create signal that is a for samples where target is 1 (present) and 0 otherwise (not present)</span>
+    X = std_dev_x * randn(N,1); <span class="comment">% create noise process by drawing N samples from 0 mean Gaussian distribution with std_dev_x</span>
+    Z = std_dev_z(i) * randn(N,1); <span class="comment">% create noise process by drawing N samples from 0 mean Gaussian distribution with std_dev_z</span>
+    Y = a + X .* target + Z .* (~target); <span class="comment">% add target signal to noise X for samples where target is present and noise Z for samples where target is not present</span>
+
+    <span class="comment">% receiver operating value</span>
+    <span class="comment">% calculate false positive and true positive rates using observed</span>
+    <span class="comment">% values and threshold parameter vector eta</span>
+    false_pos(i,:,:) = sum(and(<span class="keyword">...</span>
+     (prob_not_target * (1/sqrt(variance_x *2*pi)) * exp(-((Y - a).^2) / (2 * variance_x))) &gt;= <span class="keyword">...</span>
+     (prob_target*(1/sqrt(variance_z(i)*2*pi)) * exp(-((Y-a).^2)/(2*variance_z(i))))*eta<span class="keyword">...</span>
+     , ~target))/sum(~target);
+    true_pos(i,:,:) = sum(and(<span class="keyword">...</span>
+     (prob_not_target * (1/sqrt(variance_x *2*pi)) * exp(-((Y - a).^2) / (2 * variance_x))) &gt;= <span class="keyword">...</span>
+     (prob_target*(1/sqrt(variance_z(i)*2*pi)) * exp(-((Y-a).^2)/(2*variance_z(i))))*eta<span class="keyword">...</span>
+     , target))/sum(target);
+
+    stdz_stdx(i) = variance_z(i) / variance_x; <span class="comment">%std dev ratios of x and z for each value of variance_z and each threshold parameter</span>
+<span class="keyword">end</span>
+
+figure;
+<span class="keyword">for</span> k = 1:4
+    plot(reshape(false_pos(k, :, :), [1,500]), reshape(true_pos(k, :, :), [1,500]), <span class="keyword">...</span>
+        <span class="string">'DisplayName'</span>, [<span class="string">'stdz_stdx = '</span>,num2str(stdz_stdx(k))], <span class="keyword">...</span>
+        <span class="string">'linewidth'</span>, 1)
+    hold <span class="string">on</span>
+<span class="keyword">end</span>
+
+xlabel(<span class="string">'False Positive'</span>)
+ylabel(<span class="string">'True Positive'</span>)
+title(<span class="string">'Receiver Operating Curve (ROC)'</span>)
+legend
+</pre><pre class="codeoutput">Theoretical Error = 0.18616
+Experimental Error = 0.185
+Theoretical Error = 0.18584
+Experimental Error = 0.191
+</pre><img vspace="5" hspace="5" src="stoch_project4_01.png" alt=""> <img vspace="5" hspace="5" src="stoch_project4_02.png" alt=""> <img vspace="5" hspace="5" src="stoch_project4_03.png" alt=""> <h2 id="3">Part 2 Pattern Classification and Machine Learning</h2><pre class="codeinput">clear;
+load(<span class="string">'Iris.mat'</span>);
+samples = size(features, 1);
+
+<span class="comment">% Split data into train and test sets</span>
+trainRatio = 0.5;
+[trainInd,testInd] = crossvalind(<span class="string">'HoldOut'</span>,samples,trainRatio);
+
+<span class="comment">% Get test set features and labels</span>
+test_features = features(testInd,:);
+test_labels = labels(testInd,:);
+
+<span class="comment">% Get train set features and labels</span>
+train_features = features(trainInd,:);
+train_labels = labels(trainInd,:);
+
+<span class="comment">% Get priors by computing histogram of test set labels and dividing by the</span>
+<span class="comment">% total number of labels</span>
+priors = histcounts(test_labels) / length(test_labels);
+
+<span class="comment">% Calculate means and covariances for each class</span>
+classes = unique(train_labels); <span class="comment">% get unique classes in training set</span>
+nClasses = numel(classes); <span class="comment">% count number of unique classes in training set (= to number of target variables classifier will predict)</span>
+nFeatures = size(train_features, 2); <span class="comment">% number of features in training set</span>
+means = zeros(nClasses, nFeatures); <span class="comment">% initialize matrix to store mean values of each feature for each class</span>
+covariances = zeros(nFeatures, nFeatures, nClasses); <span class="comment">% initializes 3D array to store covariance matrices for each class</span>
+
+<span class="keyword">for</span> i = 1:nClasses
+    <span class="comment">% Get indices of training samples that belong to the current class</span>
+    indices = train_labels == classes(i);
+
+    <span class="comment">% Get features for current class</span>
+    features_i = train_features(indices, :);
+
+    <span class="comment">% Calculate mean and covariance for current class</span>
+    means(i, :) = mean(features_i);
+    covariances(:, :, i) = cov(features_i);
+<span class="keyword">end</span>
+
+<span class="comment">% Calculate likelihoods of test features for each class</span>
+<span class="comment">% pre-allocate</span>
+likelihoods = zeros(size(test_features, 1), nClasses);
+<span class="keyword">for</span> i = 1:nClasses
+    <span class="comment">% for each class comput likelihoods of test samples belonging to that</span>
+    <span class="comment">% class by computing the multivariate normal probability density</span>
+    <span class="comment">% function</span>
+    likelihoods(:, i) = mvnpdf(test_features, means(i, :), covariances(:, :, i)) * priors(i);
+<span class="keyword">end</span>
+
+<span class="comment">% Estimate class labels for test set</span>
+[~, estimate] = max(likelihoods, [], 2);
+
+<span class="comment">% Calculate probability of error</span>
+error = 1 - mean(estimate == test_labels);
+fprintf(<span class="string">'Probability of error: %f\n'</span>, error);
+
+<span class="comment">% Create confusion matrix and plot it</span>
+con_mat = confusionmat(test_labels, estimate);
+figure;
+confusionchart(con_mat);
+title(<span class="string">'Confusion Matrix'</span>);
+</pre><pre class="codeoutput">Probability of error: 0.026667
+</pre><img vspace="5" hspace="5" src="stoch_project4_04.png" alt=""> <p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2023a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Stochastics Project 4
+%% Nishat Ahmed, Armaan Kapoor, Nicolette Thiro
+
+clc;
+clear;
+close all;
+
+%% Part 1 Radar Detection 
+
+% a) Derive and implement in MATLAB the MAP rule for detecting the target. 
+% Run 1000 iterations of your detector; compare the probability of error with the theoretical probability of error.
+
+N = 1000; % iterations
+%priori probabilities
+prob_target = 0.8; % probability target is there
+prob_not_target = 0.2; % probability target isn't there
+
+eta = prob_target/prob_not_target; % ratio of priori probabilities 
+variance = 1; % variance of noise
+std_dev = sqrt(variance);
+a = 1; % mean difference (difference between population means)
+
+target = (rand(N,1) > prob_target); % generate N random samples that represent target is present (if 1) or target is not present (if 0)
+A = a * double(target); % create signal that is a for samples where target is 1 (present) and 0 otherwise (not present)
+X = sqrt(variance) * rand(N,1); % create noise process by drawing N samples from 0 mean Gaussian distribution with variance
+
+Y = A + X; % noisy observation of A, used to perform detection using MAP rule
+
+% MAP rule: used to estimate unknown parameter based on a set of
+% observations, selects estimate that maximizes prior probability
+% gamma: threshold value that is the decision boundary that separates 2 hypotheses (target is there vs. isn't there)
+% gamma calculated using MAP rule when likelihood function is Gaussian and
+% priori probabilities are uniform
+gamma = a ./ 2 + variance * log(eta) ./ (a); 
+
+% normcdf used to get cdf of standard normal distribution
+% compute probabilities of the 2 hypotheses based on calculated gamma 
+p1 = 1 - normcdf(gamma, 0, std_dev); % target not there probability 
+p2 = normcdf(gamma, a, std_dev); % target is there probability 
+
+% theoretical error rate of decision rule
+% expected probability of error under given prior probabilities and decision rule 
+theoretical_error = prob_target * p1 + prob_not_target * p2; 
+                     
+% experimental probability of error
+% and(Y > gamma, target): subset of observations that are above threshold
+% gamma and target is present
+% and(Y <= gamma, ~target): subset of observations that are below or at
+% threshold gamma and target is not present
+% or: used to identify all observations that are targets above the
+% threshold or not targets below the threshold 
+incorrect_predictions = or(and(Y > gamma, target), and(Y <= gamma, ~target));
+
+%sum: counts all observations that meet the conditions 
+% experimental error rate computed as the proportional of observations that
+% are misclassified (not in the subset) divided by total observations N
+experimental_error = 1 - sum(incorrect_predictions(:)) / N;
+
+disp("Theoretical Error = " + theoretical_error);
+disp("Experimental Error = " + experimental_error);
+
+% b) Implement a simulation that plots the receiver operating curve for this detector. 
+% Plot the receiver operating curve for several signal to noise ratios.
+
+a2 = [0.5, 1, 2, 4]; % simulate detection system for these 4 SNR values
+
+% vector of N values logarithmically spaced between 10^-7 and 10^7, which
+% represents the threshold parameter for the detection system
+eta2 = logspace(-7, 7, N);
+variance2 = 1; % variance of noise 
+% length(a2)=4
+
+% pre-allocate space for false positives, true positives, and SNR values
+false_pos = zeros(4, 1, N);
+true_pos = zeros(4, 1, N);
+SNR = zeros(4, 1, N);
+
+for i = 1:4
+    target2 = (rand(N,1) > prob_target); % generate N random samples for each a2 value
+    A2 = a2(i) * double(target2); % create signal that is a2(i) for samples where target is 1 (present) and 0 otherwise (not present)
+    X2 = sqrt(variance2) * randn(N,1); % create noise process by drawing N samples from 0 mean Gaussian distribution with variance2
+
+    Y2 = A2 + X2; % noisy observation of A2, used to perform detection using MAP rule
+    
+    % calculate threshold gamma according to MAP rule
+    gamma2 = a2(i)/2 + variance2 * log(eta2) / a2(i);
+    
+    % calculate false pos, true pos, and SNR values for each a2 value and
+    % eta2 value
+    % and(Y2 >gamma2, ~target2): above threshold but target is not present
+    % and(Y2 >gamma2, target2): above threshold and target is present
+    false_pos(i, :, :) = sum(and(Y2 >gamma2, ~target2)) / sum(~target2); % false positive probability
+    true_pos(i, :, :) = sum(and(Y2 >gamma2, target2)) ./ sum(target2); % true positive probability 
+    
+    SNR(i) = a2(i) / variance2; % ratio of power of target signal to power of noise
+end
+
+% plot detection system performance for the a2 values 
+figure;
+colors = {'blue', 'red', 'green', 'magenta'}; % Define an array of colors
+for i = 1:4
+    x = reshape(false_pos(i, :, :), [1,N]);
+    y = reshape(true_pos(i, :, :), [1,N]);
+    line(x, y, 'DisplayName', ['SNR = ', num2str(SNR(i))], 'linewidth', 1, 'color', colors{i});
+    hold on;
+end
+
+legend('Location', 'best');
+xlabel('False Positive')
+ylabel('True Positive')
+title('Receiver Operating Curve (ROC)')
+
+% c) Assume that missing the target is 10 times worse than falsely detecting the target. 
+% What is the decision rule that minimizes the conditional risk? 
+% Mark this point on your receiver operating curve for at least one SNR value.
+
+eta3 = (0.1) * prob_target /prob_not_target; % priori probability of target signal being present in the received signal
+a3 =2; % chosen SNR value to mark
+variance3 = 1; % variance of noise 
+
+target3 = (rand(N,1) > prob_target); % generate N random samples that represent target is present (if 1) or target is not present (if 0)
+A3 = a3 * double(target3); % create signal that is a3 for samples where target is 1 (present) and 0 otherwise (not present)
+X3 = sqrt(variance3) * randn(N,1); % create noise process by drawing N samples from 0 mean Gaussian distribution with variance3
+
+Y3 = A3 + X3; % noisy observation of A3, used to perform detection using MAP rule
+
+% calculate threshold gamma using MAP rule and constants defined above 
+gamma3 = a3/2 + variance3 * log(eta3) / a3;
+
+% count numbers of times Y3 exceeds threshold gamma3 for when the target is not 
+% present and divide by total number of non-target values     
+false_pos2 = sum(and(Y3 > gamma3, ~target3)) / sum(~target3); %false positive probability
+
+% count numbers of times Y3 exceeds threshold gamma3 for when the target is
+% present and divide by total number of target values     
+true_pos2 = sum(and(Y3 > gamma3, target3)) ./ sum(target3); % true positive probability 
+
+figure;
+x = reshape(false_pos(3, :, :), [1,N]);
+y = reshape(true_pos(3, :, :), [1,N]);
+line(x, y, 'DisplayName', ['SNR = ', num2str(SNR(3))], 'linewidth', 1); % plot ROC curve for third SNR value
+hold on;
+
+% d) Using the cost structure in part c), Select one SNR value and plot the value of the expected 
+% cost for a range of a priori target present probabilities from 0 to 1.
+
+% plot point corresponding to (false_pos2, true_pos2) pair on ROC curve for
+% eta value of .4
+scatter(false_pos2, true_pos2, '*', 'DisplayName', '\eta = 0.4');
+xlabel('False Positive');
+ylabel('True Positive');
+title(['Receiver Operating Curve (ROC)' ...
+        '(\eta = 0.4), SNR = ', num2str(SNR(3))]);
+legend;
+
+% e) Now, repeat parts a and b, but change the model such that the target present remains Y = A+X but the target not present model is now Y = A+Z 
+% where Z is a zero mean Gaussian random variable with σ2z > σ2. Plot a few receiver operating curves for different ratios of σ2z to σ2.
+
+% redo a)
+
+% set values
+eta = prob_target/prob_not_target; % ratio of priori probabilities 
+variance_x = 1; % variance of noise 
+variance_z = 25; % variance of noise 
+std_dev_x = sqrt(variance_x); 
+std_dev_z = sqrt(variance_z);
+
+target = (rand(N,1) > prob_target); % generate N random samples that represent target is present (if 1) or target is not present (if 0)
+A = a * double(target); % create signal that is a for samples where target is 1 (present) and 0 otherwise (not present)
+X = std_dev_x * randn(N,1); % create noise process by drawing N samples from 0 mean Gaussian distribution with variance
+Z = std_dev_z * randn(N,1); % create noise process by drawing N samples from 0 mean Gaussian distribution with variance
+
+% add target signal to noise X for samples where target is present 
+% and noise Z for samples where target is not present
+Y = a + X .* target + Z .* (~target); 
+
+% calculate decision threshold gamma
+gamma = sqrt(2 * ((variance_x * variance_z)/(variance_x - variance_z)) * ...
+                log(eta * sqrt(variance_x/variance_z)));
+
+% probability of false positive (system detects target when it is not present)
+p1 = normcdf(gamma, 0, std_dev_z) - normcdf(-gamma, 0, std_dev_z); % difference between cdf of 0 mean Gaussian distribution with std_dev_z evaluated at gamma and -gamma
+
+% probability of a miss (system fails to detect target when it is present)
+p2 = 2 * (1 - normcdf(gamma, 0, std_dev_x)); % twice the difference between 1 and cdf of 0 mean Gaussian distribution with std_dev_x evaluated at gamma
+
+% theoretical probability of error
+theoretical_error = (p1 * prob_target) + (p2 * prob_not_target); % weighted sum of p1 and p2 with weights being probabilities of target being present and not present, respectively
+
+% experimental probability of error
+% compare pdfs of the signal plus noise process Y given that the target is
+% present and that the target is not present
+% then check if pdf of Y given that the target is present is greater than
+% the pdf of Y given that the target is not present
+% then sum all errors and divide by the number of samples N 
+experimental_error = sum(...
+  (prob_target * (1 / sqrt(variance_z * 2 * pi)) * exp(-((Y - a).^2) / (2 * variance_z))) > ...
+  (prob_not_target * (1 / sqrt(variance_x * 2 * pi)) * exp(-((Y - a).^2) / (2 * variance_x))) & target | ...
+  (prob_target * (1 / sqrt(variance_z * 2 * pi)) * exp(-((Y - a).^2) / (2 * variance_z))) <= ...
+  (prob_not_target * (1 / sqrt(variance_x * 2 * pi)) * exp(-((Y - a).^2) / (2 * variance_x))) & ~target) / N;
+
+disp("Theoretical Error = " + theoretical_error);
+disp("Experimental Error = " + experimental_error);
+
+% redo b)
+
+variance_z = [4, 9, 16, 25]; % values for variance of z
+std_dev_z = sqrt(variance_z);
+
+% vector of 500 values logarithmically spaced between -5 and 3, which
+% represents the threshold parameter for the detection system
+eta = logspace(-5,3,500); 
+
+% pre-allocate space 
+false_pos = zeros(4, 1, 500);
+true_pos = zeros(4, 1, 500);
+stdz_stdx = zeros(4, 1, N);
+
+for i = 1:4 % iterate through 4 different values for the variance of the signal
+    target = (rand(N,1) > prob_target); % generate N random samples for each a2 value
+    A = a * double(target); % create signal that is a for samples where target is 1 (present) and 0 otherwise (not present)
+    X = std_dev_x * randn(N,1); % create noise process by drawing N samples from 0 mean Gaussian distribution with std_dev_x
+    Z = std_dev_z(i) * randn(N,1); % create noise process by drawing N samples from 0 mean Gaussian distribution with std_dev_z
+    Y = a + X .* target + Z .* (~target); % add target signal to noise X for samples where target is present and noise Z for samples where target is not present
+    
+    % receiver operating value
+    % calculate false positive and true positive rates using observed
+    % values and threshold parameter vector eta
+    false_pos(i,:,:) = sum(and(...
+     (prob_not_target * (1/sqrt(variance_x *2*pi)) * exp(-((Y - a).^2) / (2 * variance_x))) >= ...
+     (prob_target*(1/sqrt(variance_z(i)*2*pi)) * exp(-((Y-a).^2)/(2*variance_z(i))))*eta...
+     , ~target))/sum(~target);
+    true_pos(i,:,:) = sum(and(...
+     (prob_not_target * (1/sqrt(variance_x *2*pi)) * exp(-((Y - a).^2) / (2 * variance_x))) >= ...
+     (prob_target*(1/sqrt(variance_z(i)*2*pi)) * exp(-((Y-a).^2)/(2*variance_z(i))))*eta...
+     , target))/sum(target);
+ 
+    stdz_stdx(i) = variance_z(i) / variance_x; %std dev ratios of x and z for each value of variance_z and each threshold parameter
+end
+
+figure;
+for k = 1:4
+    plot(reshape(false_pos(k, :, :), [1,500]), reshape(true_pos(k, :, :), [1,500]), ... 
+        'DisplayName', ['stdz_stdx = ',num2str(stdz_stdx(k))], ...
+        'linewidth', 1)
+    hold on
+end
+
+xlabel('False Positive')
+ylabel('True Positive')
+title('Receiver Operating Curve (ROC)')
+legend
+
+%% Part 2 Pattern Classification and Machine Learning 
+clear;
+load('Iris.mat');
+samples = size(features, 1);
+
+% Split data into train and test sets
+trainRatio = 0.5;
+[trainInd,testInd] = crossvalind('HoldOut',samples,trainRatio);
+
+% Get test set features and labels
+test_features = features(testInd,:);
+test_labels = labels(testInd,:);
+
+% Get train set features and labels
+train_features = features(trainInd,:);
+train_labels = labels(trainInd,:);
+
+% Get priors by computing histogram of test set labels and dividing by the
+% total number of labels
+priors = histcounts(test_labels) / length(test_labels);
+
+% Calculate means and covariances for each class
+classes = unique(train_labels); % get unique classes in training set
+nClasses = numel(classes); % count number of unique classes in training set (= to number of target variables classifier will predict)
+nFeatures = size(train_features, 2); % number of features in training set
+means = zeros(nClasses, nFeatures); % initialize matrix to store mean values of each feature for each class
+covariances = zeros(nFeatures, nFeatures, nClasses); % initializes 3D array to store covariance matrices for each class
+
+for i = 1:nClasses
+    % Get indices of training samples that belong to the current class
+    indices = train_labels == classes(i);
+    
+    % Get features for current class
+    features_i = train_features(indices, :);
+    
+    % Calculate mean and covariance for current class
+    means(i, :) = mean(features_i);
+    covariances(:, :, i) = cov(features_i);
+end
+
+% Calculate likelihoods of test features for each class
+% pre-allocate
+likelihoods = zeros(size(test_features, 1), nClasses);
+for i = 1:nClasses
+    % for each class comput likelihoods of test samples belonging to that
+    % class by computing the multivariate normal probability density
+    % function
+    likelihoods(:, i) = mvnpdf(test_features, means(i, :), covariances(:, :, i)) * priors(i);
+end
+
+% Estimate class labels for test set
+[~, estimate] = max(likelihoods, [], 2);
+
+% Calculate probability of error
+error = 1 - mean(estimate == test_labels);
+fprintf('Probability of error: %f\n', error);
+
+% Create confusion matrix and plot it
+con_mat = confusionmat(test_labels, estimate);
+figure;
+confusionchart(con_mat);
+title('Confusion Matrix');
+
+
+##### SOURCE END #####
+--></body></html>
